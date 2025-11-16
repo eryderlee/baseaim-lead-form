@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   ANIMATED GRADIENT BACKGROUND SYSTEM
+   ======================================== */
+
+/* Main Container */
+.moving-gradient-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Base Gradient Layer */
+.gradient-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center,
+    #FFFFFF 0%,
+    #FFFFFF 40%,
+    #F8FCFF 60%,
+    #E1F5FE 80%,
+    #87CEEB 100%);
+  opacity: 1;
+}
+
+/* Wave Layers Base Styles */
+.wave-layer {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  border-radius: 50% 40% 60% 30%;
+  filter: blur(25px);
+  opacity: 0.5;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  contain: layout style paint;
+}
+
+/* Firefox-specific optimization */
+@supports (-moz-appearance:none) {
+  .wave-layer {
+    filter: blur(20px);
+  }
+}
+
+/* Individual Wave Configurations */
+.wave-1 {
+  background: linear-gradient(45deg,
+    rgba(10, 46, 110, 0.9) 0%,
+    rgba(79, 195, 247, 0.7) 50%,
+    rgba(135, 206, 235, 0.5) 100%);
+  top: -30%;
+  left: -30%;
+  animation: wave-drift-1 45s infinite linear;
+  transform-origin: center center;
+}
+
+.wave-2 {
+  background: linear-gradient(-45deg,
+    rgba(135, 206, 235, 0.5) 0%,
+    rgba(107, 182, 255, 0.7) 50%,
+    rgba(10, 46, 110, 0.9) 100%);
+  bottom: -30%;
+  right: -30%;
+  animation: wave-drift-2 60s infinite linear reverse;
+  transform-origin: center center;
+}
+
+.wave-3 {
+  background: linear-gradient(90deg,
+    rgba(107, 182, 255, 0.6) 0%,
+    rgba(135, 206, 235, 0.7) 30%,
+    rgba(10, 46, 110, 0.5) 70%,
+    rgba(79, 195, 247, 0.6) 100%);
+  top: -20%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  animation: wave-drift-3 50s infinite linear;
+  transform-origin: center center;
+}
+
+.wave-4 {
+  background: linear-gradient(180deg,
+    rgba(10, 46, 110, 0.8) 0%,
+    rgba(107, 182, 255, 0.6) 50%,
+    rgba(176, 224, 230, 0.4) 100%);
+  top: 60%;
+  left: -25%;
+  width: 50%;
+  height: 70%;
+  animation: wave-drift-1 55s infinite linear reverse;
+  transform-origin: center center;
+}
+
+.wave-5 {
+  background: linear-gradient(270deg,
+    rgba(79, 195, 247, 0.7) 0%,
+    rgba(135, 206, 235, 0.5) 50%,
+    rgba(107, 182, 255, 0.6) 100%);
+  bottom: -10%;
+  left: 50%;
+  width: 55%;
+  height: 60%;
+  animation: wave-drift-2 48s infinite linear;
+  transform-origin: center center;
+}
+
+/* Gradient Overlay */
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center,
+    transparent 0%,
+    transparent 50%,
+    rgba(227, 242, 253, 0.1) 80%,
+    rgba(187, 222, 251, 0.15) 100%);
+  animation: overlay-pulse 40s infinite alternate;
+}
+
+/* Keyframe Animations */
+@keyframes wave-drift-1 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(20px, -10px, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(360deg);
+  }
+}
+
+@keyframes wave-drift-2 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-15px, 10px, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(360deg);
+  }
+}
+
+@keyframes wave-drift-3 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(15px, 8px, 0) rotate(180deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(360deg);
+  }
+}
+
+@keyframes overlay-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .wave-layer {
+    filter: blur(25px);
+  }
+
+  .wave-1 {
+    animation-duration: 60s;
+  }
+
+  .wave-2 {
+    animation-duration: 75s;
+  }
+
+  .wave-3 {
+    animation-duration: 65s;
+  }
+}
+
+/* Accessibility: Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .wave-layer {
+    animation: none;
+  }
+
+  .gradient-overlay {
+    animation: none;
+  }
+}
+
+/* ========================================
+   CUSTOM UTILITY CLASSES
+   ======================================== */
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

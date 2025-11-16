@@ -1,0 +1,5 @@
+Multi-step forms convert 3x better (13.85% vs 4.53%)
+Long-form pages for complex B2B services: 79-363% conversion increase
+Instant calendar booking doubles conversions (30% → 66.7%)
+Pain-point messaging: 45% higher conversion than feature-driven
+Optimal form fields: 3-5 fields for B2B (4.1% drop per additional field)

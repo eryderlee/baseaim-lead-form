@@ -62,10 +62,23 @@ export default function LeadFormShort() {
     setSubmitStatus('idle')
 
     try {
-      // Simulate API call - Replace with your actual API endpoint or Cal.com redirect
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Save to database first
+      const response = await fetch('/api/submit-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          form_type: 'short',
+        }),
+      })
 
-      console.log('Form submitted:', formData)
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Submission failed')
+      }
 
       // Redirect to Cal.com with pre-filled data
       const calcomUrl = new URL('https://cal.com/team/baseaim/ai-consultation')

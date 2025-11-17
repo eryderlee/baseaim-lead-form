@@ -79,8 +79,42 @@ export default function MultiStepForm() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (validateStep(currentStep)) {
+      // If moving to step 4 (calendar), save data to database first
+      if (currentStep === 3) {
+        try {
+          const response = await fetch('/api/submit-lead', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: formData.name,
+              email: formData.email,
+              company: formData.company,
+              industry: formData.industry,
+              company_size: formData.companySize,
+              role: formData.role,
+              challenge: formData.challenge,
+              timeline: formData.timeline,
+              budget: formData.budget || undefined,
+              form_type: 'multi-step',
+            }),
+          })
+
+          const result = await response.json()
+
+          if (!response.ok || !result.success) {
+            console.error('Failed to save lead data:', result.message)
+            // Still allow them to proceed to calendar
+          }
+        } catch (error) {
+          console.error('Error saving lead data:', error)
+          // Still allow them to proceed to calendar
+        }
+      }
+
       setCurrentStep(prev => Math.min(prev + 1, totalSteps))
     }
   }

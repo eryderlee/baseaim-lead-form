@@ -7,9 +7,10 @@ interface CalendarBookingProps {
     company?: string
     [key: string]: any
   }
+  leadId?: string | null
 }
 
-export default function CalendarBooking({ formData }: CalendarBookingProps) {
+export default function CalendarBooking({ formData, leadId }: CalendarBookingProps) {
   // Cal.com team event URL for Baseaim
   const calcomUrl = 'https://cal.com/team/baseaim/ai-consultation'
 
@@ -29,6 +30,7 @@ export default function CalendarBooking({ formData }: CalendarBookingProps) {
 
     // Add additional context as notes
     const notes = []
+    if (leadId) notes.push(`Lead ID: ${leadId}`) // Include lead ID for tracking
     if (formData?.industry) notes.push(`Industry: ${formData.industry}`)
     if (formData?.companySize) notes.push(`Company Size: ${formData.companySize}`)
     if (formData?.challenge) notes.push(`Challenge: ${formData.challenge}`)

@@ -117,7 +117,7 @@ export default function CostRevealPage({ adminHours, onContinue }: CostRevealPag
             {formatCurrency(calc.minCost)} - {formatCurrency(calc.maxCost)}
           </div>
           <p className="text-sm md:text-base font-inter text-gray-600">
-            in lost productivity annually
+            in lost productivity annually 
           </p>
         </div>
 

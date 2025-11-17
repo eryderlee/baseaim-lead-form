@@ -13,7 +13,8 @@
       "Bash(nul)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(timeout 5 bash:*)"
+      "Bash(timeout 5 bash:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

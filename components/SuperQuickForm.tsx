@@ -30,6 +30,7 @@ export default function SuperQuickForm() {
   })
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [leadId, setLeadId] = useState<string | null>(null) // Track the created lead ID
 
   const handleNext = () => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages))
@@ -47,7 +48,7 @@ export default function SuperQuickForm() {
     }, 300)
   }
 
-  const handleNameEmailSubmit = () => {
+  const handleNameEmailSubmit = async () => {
     const newErrors: { [key: string]: string } = {}
 
     if (!formData.name.trim()) newErrors.name = 'Name is required'
@@ -60,11 +61,43 @@ export default function SuperQuickForm() {
     setErrors(newErrors)
 
     if (Object.keys(newErrors).length === 0) {
+      // Save initial data (name, email, business info) immediately
+      try {
+        const response = await fetch('/api/submit-lead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            company: '', // Not collected in this form
+            business_type: formData.businessType,
+            team_size: formData.teamSize,
+            admin_hours: formData.adminHours,
+            form_type: 'super-quick',
+          }),
+        })
+
+        const result = await response.json()
+
+        if (response.ok && result.success) {
+          // Store the lead ID so we can update it later with phone
+          setLeadId(result.data?.id || null)
+          console.log('✅ Lead saved with ID:', result.data?.id)
+        } else {
+          console.error('Failed to save initial lead data:', result.message)
+        }
+      } catch (error) {
+        console.error('Error saving initial lead data:', error)
+      }
+
+      // Continue to next page regardless of save success
       handleNext()
     }
   }
 
-  const handlePhoneSubmit = () => {
+  const handlePhoneSubmit = async () => {
     const newErrors: { [key: string]: string } = {}
 
     if (!formData.phone.trim()) newErrors.phone = 'Phone is required'
@@ -72,6 +105,61 @@ export default function SuperQuickForm() {
     setErrors(newErrors)
 
     if (Object.keys(newErrors).length === 0) {
+      // Update existing lead record with phone number
+      if (leadId) {
+        try {
+          const response = await fetch('/api/update-lead', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: leadId,
+              phone: formData.phone,
+            }),
+          })
+
+          const result = await response.json()
+
+          if (response.ok && result.success) {
+            console.log('✅ Lead updated with phone number')
+          } else {
+            console.error('Failed to update lead with phone:', result.message)
+          }
+        } catch (error) {
+          console.error('Error updating lead with phone:', error)
+        }
+      } else {
+        // If we don't have a lead ID (shouldn't happen), create a new record
+        console.warn('No lead ID found, creating new record')
+        try {
+          const response = await fetch('/api/submit-lead', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              company: '',
+              business_type: formData.businessType,
+              team_size: formData.teamSize,
+              admin_hours: formData.adminHours,
+              form_type: 'super-quick',
+            }),
+          })
+
+          const result = await response.json()
+          if (response.ok && result.success) {
+            setLeadId(result.data?.id || null)
+          }
+        } catch (error) {
+          console.error('Error creating lead:', error)
+        }
+      }
+
+      // Continue to calendar regardless
       handleNext()
     }
   }
@@ -274,7 +362,7 @@ export default function SuperQuickForm() {
           </div>
 
           <div className="max-w-5xl mx-auto">
-            <CalendarBooking formData={formData} />
+            <CalendarBooking formData={formData} leadId={leadId} />
           </div>
         </QuestionPage>
       )}

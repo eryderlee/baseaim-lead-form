@@ -80,13 +80,18 @@ async function verifyWebhookSignature(
 export async function POST(request: NextRequest) {
   try {
     console.log('=== Cal.com Webhook Received ===')
+    console.log('Timestamp:', new Date().toISOString())
+    console.log('Headers:', Object.fromEntries(request.headers.entries()))
 
     // Read the body as text first for signature verification
     const bodyText = await request.text()
+    console.log('Raw body length:', bodyText.length)
+    console.log('Raw body preview:', bodyText.substring(0, 200))
 
     // Verify signature if secret is configured
     const isValid = await verifyWebhookSignature(request, bodyText)
     if (!isValid) {
+      console.error('❌ Signature verification failed!')
       return NextResponse.json(
         { error: 'Invalid webhook signature' },
         { status: 401 }
@@ -94,7 +99,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CalComWebhookPayload = JSON.parse(bodyText)
-    console.log('Webhook event:', body.triggerEvent)
+    console.log('✅ Webhook event:', body.triggerEvent)
+    console.log('Booking details:', {
+      uid: body.payload?.uid,
+      bookingId: body.payload?.bookingId,
+      title: body.payload?.title,
+      attendeeCount: body.payload?.attendees?.length,
+    })
 
     // Only process booking.created events
     if (body.triggerEvent !== 'BOOKING_CREATED') {

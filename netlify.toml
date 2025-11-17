@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Secrets scanning configuration
+[build.environment]
+  # Tell Netlify that NEXT_PUBLIC_ variables are meant to be public
+  # These are intentionally included in the client-side bundle
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY"
+
+# Cache Next.js build for faster builds
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
